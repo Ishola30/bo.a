@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOA Banking</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fa;color:#172033}
+:root{--nav:#102a43;--blue:#1769aa;--line:#e8edf2}
+.app{display:flex;min-height:100vh}.side{width:245px;background:var(--nav);color:white;padding:25px 15px;position:fixed;top:0;bottom:0}
+.logo{font-size:28px;font-weight:800;padding:0 15px 35px}.sim{font-size:9px;background:#fff;color:var(--nav);padding:5px 8px;border-radius:12px;margin-left:7px;vertical-align:middle}
+nav button{display:block;width:100%;border:0;background:transparent;color:#cbd8e5;text-align:left;padding:14px 15px;border-radius:10px;margin:4px 0;font-size:14px;cursor:pointer}
+nav button.active,nav button:hover{background:#ffffff18;color:#fff}.main{margin-left:245px;width:100%;padding:25px 4%}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.top h2{margin:0}.user{font-size:14px;color:#687789}
+.page{display:none}.page.active{display:block}
+.balance{background:linear-gradient(135deg,#102a43,#1d567d);color:white;border-radius:20px;padding:27px;max-width:720px;box-shadow:0 12px 30px #102a4325}
+.balance small{opacity:.75}.money{font-size:39px;font-weight:800;margin:8px 0 22px}.quick{display:flex;gap:9px;flex-wrap:wrap}
+.quick button,.primary{border:0;padding:11px 18px;border-radius:9px;cursor:pointer;font-weight:600}
+.quick button{background:white;color:var(--nav)}.primary{background:var(--nav);color:white}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}.card{background:white;border-radius:16px;padding:20px;box-shadow:0 5px 20px #0000000a}
+.card h3{margin:0 0 15px}.big{font-size:23px;font-weight:800}.muted{font-size:13px;color:#788697}
+.table{width:100%;border-collapse:collapse;background:white;border-radius:15px;overflow:hidden}
+.table th,.table td{padding:16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}.table th{background:#fafbfd;color:#64748b}
+.green{color:#15803d;font-weight:bold}.red{color:#c24141;font-weight:bold}
+.search{width:100%;padding:13px;border:1px solid #dce3ea;border-radius:9px;margin-bottom:15px}
+.form{max-width:550px}.form input,.form select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #dce3ea;border-radius:9px}
+.profile-row{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line)}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}.modal-box{background:white;padding:25px;border-radius:18px;width:100%;max-width:430px}
+.close{float:right;border:0;background:none;font-size:23px;cursor:pointer}.notice{font-size:10px;color:#77818d;text-align:center;margin:25px}
+@media(max-width:750px){
+.side{width:70px;padding:20px 8px}.logo{font-size:20px;padding:0 7px 30px}.sim{display:none}
+nav button{font-size:0;text-align:center;padding:14px}.main{margin-left:70px;padding:20px 14px}
+.cards{grid-template-columns:1fr}.money{font-size:31px}.table{font-size:12px}.table th,.table td{padding:11px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+<aside class="side">
+  <div class="logo">BOA <span class="sim">SIM</span></div>
+  <nav>
+    <button class="active" onclick="showPage('dashboard',this)">▣ Dashboard</button>
+    <button onclick="showPage('transactions',this)">↔ Transactions</button>
+    <button onclick="showPage('transfer',this)">⇄ Transfer</button>
+    <button onclick="showPage('profile',this)">◯ Profile</button>
+    <button onclick="showPage('settings',this)">⚙ Settings</button>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="top">
+  <div><div class="muted">Welcome back</div><h2>Jose Anthonio Martinez</h2></div>
+  <div class="user">BOA Personal Account</div>
+</div>
+
+<section id="dashboard" class="page active">
+  <div class="balance">
+    <small>Available balance</small>
+    <div class="money" id="balance">$4,000,000.00</div>
+    <small>USD • Personal account</small>
+    <div class="quick">
+      <button onclick="showPage('transfer',document.querySelectorAll('nav button')[2])">Transfer</button>
+      <button onclick="notify('Deposit service opened')">Deposit</button>
+      <button onclick="notify('Withdrawal service opened')">Withdraw</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="muted">Account status</div><div class="big green">Active</div></div>
+    <div class="card"><div class="muted">Currency</div><div class="big">USD</div></div>
+    <div class="card"><div class="muted">Recent activity</div><div class="big">3</div></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Latest Transaction</h3>
+    <div class="profile-row"><span>Transfer from</span><b>Publisher clearing house office department</b></div>
+    <div class="profile-row"><span>Amount</span><b>$4,000,000.00</b></div>
+    <div class="profile-row"><span>Status</span><span class="green">Completed</span></div>
+  </div>
+</section>
+
+<section id="transactions" class="page">
+  <div class="card">
+    <h3>Transactions</h3>
+    <input class="search" id="search" onkeyup="filterTx()" placeholder="Search transactions...">
+    <table class="table">
+      <thead><tr><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody id="tx">
+        <tr><td>Transfer from Publisher clearing house office department</td><td>+$4,000,000.00</td><td class="green">Completed</td></tr>
+        <tr><td>Account activation</td><td>—</td><td class="green">Completed</td></tr>
+        <tr><td>Profile update</td><td>—</td><td class="green">Completed</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="transfer" class="page">
+  <div class="card form">
+    <h3>Make a Transfer</h3>
+    <label>Recipient</label>
+    <input id="recipient" placeholder="Recipient name">
+    <label>Amount</label>
+    <input id="sendAmount" type="number" placeholder="0.00">
+    <label>Transfer type</label>
+    <select><option>Bank transfer</option><option>Internal transfer</option></select>
+    <button class="primary" onclick="reviewTransfer()">Review Transfer</button>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="card">
+    <h3>Profile</h3>
+    <div class="profile-row"><span>Full name</span><b>Jose Anthonio Martinez</b></div>
+    <div class="profile-row"><span>Bank</span><b>BOA</b></div>
+    <div class="profile-row"><span>Account type</span><b>Personal</b></div>
+    <div class="profile-row"><span>Status</span><span class="green">Active</span></div>
+  </div>
+</section>
+
+<section id="settings" class="page">
+  <div class="card">
+    <h3>Settings</h3>
+    <div class="profile-row"><span>Notifications</span><button class="primary" onclick="notify('Notifications updated')">Manage</button></div>
+    <div class="profile-row"><span>Security</span><button class="primary" onclick="notify('Security settings opened')">Manage</button></div>
+    <div class="profile-row"><span>Account preferences</span><button class="primary" onclick="notify('Preferences opened')">Edit</button></div>
+  </div>
+</section>
+
+<div class="notice">PERSONAL ACCOUNT — This Account is designed in Agreement with BANK OF AMERICA AND Publisher clearing house office department for winnings distribution.</div>
+</main>
+</div>
+
+<div class="modal" id="modal">
+ <div class="modal-box">
+   <button class="close" onclick="closeModal()">×</button>
+   <h3>Transfer Review</h3>
+   <p id="review"></p>
+   <button class="primary" onclick="closeModal()">Close</button>
+ </div>
+</div>
+
+<script>
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+}
+function notify(msg){alert(msg)}
+function reviewTransfer(){
+ let n=document.getElementById('recipient').value;
+ let a=document.getElementById('sendAmount').value;
+ if(!n||!a)return notify('Please enter a recipient and amount.');
+ document.getElementById('review').innerHTML='<b>Recipient:</b> '+n+
+ '<br><br><b>Amount:</b> $'+Number(a).toLocaleString();
+ document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function filterTx(){
+ let q=document.getElementById('search').value.toLowerCase();
+ document.querySelectorAll('#tx tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none');
+}
+</script>
+</body>
+</html>
